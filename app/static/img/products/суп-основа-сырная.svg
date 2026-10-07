@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f7f3"/><stop offset="1" stop-color="#ecece5"/></linearGradient></defs>
+<rect width="380" height="320" rx="32" fill="url(#bg)"/><circle cx="305" cy="66" r="44" fill="#7991b4" opacity=".09"/>
+<path d="M102 120h112l20 124H82z" fill="none" stroke="#7991b4" stroke-width="11"/><path d="M102 120l24-30h64l24 30" fill="none" stroke="#7991b4" stroke-width="11"/><circle cx="128" cy="172" r="11" fill="#7991b4"/><circle cx="170" cy="188" r="8" fill="#7991b4"/>
+<text x="190" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#2c2c29">Суп основа сырная</text>
+</svg>

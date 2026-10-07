@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-head">
+  <div><div class="eyebrow">Кухня · быстрая маркировка</div><h1>Печать маркировок</h1><p>Выберите цех → продукт → количество → печать. Markify отправляет задание напрямую через Print Agent на термопринтер.</p></div>
+  <div class="operator-chip">{{ user.name }} · {{ user.role|capitalize }}</div>
+</section>
+
+<section class="stats top-stats" id="controlTop">
+  <button class="stat stat-clickable" type="button" data-status-filter="active"><span>Активны</span><b data-count="active">{{ status_counts.active }}</b></button>
+  <button class="stat warning stat-clickable" type="button" data-status-filter="warning"><span>Скоро заменить</span><b data-count="warning">{{ status_counts.warning }}</b></button>
+  <button class="stat critical stat-clickable" type="button" data-status-filter="critical"><span>Пора менять</span><b data-count="critical">{{ status_counts.critical }}</b></button>
+  <button class="stat expired stat-clickable" type="button" data-status-filter="expired"><span>Просрочены</span><b data-count="expired">{{ status_counts.expired }}</b></button>
+</section>
+{% if status_counts.expired %}<a class="expired-alert" href="#control"><strong>🔴 Просрочено: {{ status_counts.expired }}</strong><span>Перейти к списку и указать цех</span></a>{% endif %}
+
+<section class="panel department-panel">
+  <div class="panel-head panel-head-wrap">
+    <div><h2>Цеха</h2><div class="subtle">Выберите цех, чтобы видеть только его продукты и маркировки.</div></div>
+    <div class="batch-actions">
+      <select id="batchPrinterSelect" class="filter-select" {% if not printers %}disabled{% endif %}>
+        {% for pr in printers %}<option value="{{ pr.id }}">{{ pr.name }}</option>{% endfor %}
+      </select>
+      <button id="batchPrintBtn" class="btn primary" type="button" {% if not printers %}disabled{% endif %}>🖨 Распечатать всё</button>
+      {% if user.role in ['admin','manager'] %}<a class="btn ghost" href="/departments">Настроить цеха</a>{% endif %}
+    </div>
+  </div>
+  <div class="department-tabs" id="departmentTabs">
+    <button class="department-tab active" type="button" data-department="">Все цеха <small>{{ products|length }}</small></button>
+    {% for d in departments %}
+      <button class="department-tab" type="button" data-department="{{ d.id }}">{{ d.name }} <small>{{ products|selectattr('department_id','equalto',d.id)|list|length }}</small></button>
+    {% endfor %}
+    <button class="department-tab unassigned" type="button" data-department="none">Без цеха <small>{{ products|selectattr('department_id','none')|list|length }}</small></button>
+  </div>
+  {% if not printers %}<div class="warning-box" id="printerSetupHint"><strong>Печать недоступна: принтер ещё не настроен.</strong> <a href="/printers">Подключить Windows / USB</a>. Для печати на рабочем ПК установите драйвер принтера и запустите Print Agent.</div>{% endif %}
+  <div class="department-hint" id="departmentHint">Выберите цех. «Распечатать всё» отправляет на принтер все продукты выбранного цеха с подтвержденным автоматическим сроком. Продукты с ручным сроком будут показаны как пропущенные, чтобы не печатать неверную дату.</div>
+</section>
+
+<section class="panel quick-actions">
+  <div class="panel-head"><div><h2>Быстрые действия</h2><div class="subtle">Последние и популярные продукты для печати в 1–2 клика.</div></div><div id="printerStatus" class="printer-status">{% if printers %}{{ '🟢 Агент онлайн' if printer_online(printers[0]) else '🟡 Агент не отвечает' }} · {{ printers[0].name }}{% else %}🔴 Xprinter не подключен{% endif %}</div></div>
+  <div class="quick-product-row" id="recentProducts">{% for p in recent_products %}<button class="quick-product" type="button" data-department-id="{{ p.department_id or 'none' }}" data-quick-product="{{ {'id':p.id,'name':p.name,'category':p.category,'unit':p.source_unit,'shelfLife':p.shelf_life_minutes,'status':p.shelf_life_status,'mode':p.label_mode,'image':'/product-icons/' ~ p.id ~ '.svg','storage':p.storage_condition}|tojson|forceescape }}"><img src="/product-icons/{{ p.id }}.svg" alt=""><span>{{ p.name }}</span><small>Последние{% if p.department %} · {{ p.department.name }}{% endif %}</small></button>{% endfor %}{% if not recent_products %}<div class="subtle">После первой печати здесь появятся последние продукты.</div>{% endif %}</div>
+  <div class="quick-product-row" id="popularProducts">{% for p in popular_products %}<button class="quick-product" type="button" data-department-id="{{ p.department_id or 'none' }}" data-quick-product="{{ {'id':p.id,'name':p.name,'category':p.category,'unit':p.source_unit,'shelfLife':p.shelf_life_minutes,'status':p.shelf_life_status,'mode':p.label_mode,'image':'/product-icons/' ~ p.id ~ '.svg','storage':p.storage_condition}|tojson|forceescape }}"><img src="/product-icons/{{ p.id }}.svg" alt=""><span>{{ p.name }}</span><small>Популярные{% if p.department %} · {{ p.department.name }}{% endif %}</small></button>{% endfor %}</div>
+</section>
+
+<section class="panel quick-print">
+  <div class="panel-head panel-head-wrap"><div><h2>Выберите продукт</h2><div class="subtle">{{ products|length }} активных позиций · поиск работает внутри выбранного цеха.</div></div><div class="toolbar"><input id="productSearch" class="search-input" type="search" placeholder="Поиск продукта…" autocomplete="off" aria-label="Поиск продукта"><div class="hotkey-hint">⌘K / Ctrl+K — поиск · Enter — печать · +/- — количество</div><select id="categoryFilter" class="filter-select"><option value="">Все категории</option>{% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div></div>
+  <div class="chips" id="categoryChips"><button class="chip active" type="button" data-category="">Все</button>{% for c in categories %}<button class="chip" type="button" data-category="{{ c }}">{{ c }}</button>{% endfor %}</div>
+  <div class="product-grid" id="productGrid">{% for p in products %}<button class="product-tile" type="button" data-department-id="{{ p.department_id or 'none' }}" data-product="{{ {'id':p.id,'name':p.name,'category':p.category,'unit':p.source_unit,'shelfLife':p.shelf_life_minutes,'status':p.shelf_life_status,'mode':p.label_mode,'image':'/product-icons/' ~ p.id ~ '.svg','storage':p.storage_condition}|tojson|forceescape }}"><span class="tile-image-wrap"><img src="/product-icons/{{ p.id }}.svg" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='/static/img/products/placeholder.svg'"></span><span class="tile-body"><span class="tile-name">{{ p.name }}</span><span class="tile-meta">{{ p.category }}{% if p.department %} · {{ p.department.name }}{% endif %}</span>{% if p.shelf_life_status == 'verified' and p.label_mode == 'auto_from_shelf_life' and p.shelf_life_minutes %}<span class="verify-badge ok">✓ Авто · {{ p.shelf_life_minutes }} мин.</span>{% else %}<span class="verify-badge muted">Срок требует подтверждения</span>{% endif %}</span></button>{% endfor %}</div>
+</section>
+
+<section class="panel" id="control"><div class="panel-head"><div><h2>Контроль сроков</h2><div class="subtle">Просроченные маркировки показывают цех, на котором они были напечатаны.</div></div><button class="btn ghost" id="refreshBtn" type="button">Обновить</button></div><div class="table-wrap"><table><thead><tr><th>Статус</th><th>Продукт</th><th>Цех</th><th>Изготовлено</th><th>Годен до</th><th>Режим</th><th></th></tr></thead><tbody id="labelsBody">{% for l in labels %}{% set st=status_for(l) %}<tr class="row-{{ st }}" data-department-id="{{ l.department_id or l.product.department_id or 'none' }}" data-status="{{ st }}"><td><span class="status {{ st }}">{{ {'active':'Активна','warning':'Скоро заменить','critical':'Пора менять','expired':'Просрочено'}[st] }}</span></td><td><b>{{ l.product_name_snapshot or l.product.name }}</b><small>{{ l.product.category }}</small></td><td><strong>{{ l.department_name_snapshot or (l.product.department.name if l.product.department else 'Без цеха') }}</strong></td><td>{{ l.created_at|formatdt(location.timezone) }}</td><td>{{ l.expires_at|formatdt(location.timezone) }}</td><td>{{ 'Авто' if l.shelf_life_snapshot_minutes else 'Вручную' }}</td><td class="actions-cell">{% if l.print_job and l.print_job.status == 'completed' %}<button class="btn small repeat-label-btn" type="button" data-job-id="{{ l.print_job_id }}">Повторить</button>{% endif %}{% if st=='expired' %}<button class="btn small danger reprint-btn" type="button" data-label-id="{{ l.id }}">Новая партия</button>{% endif %} <button class="btn small close-label-btn" type="button" data-label-id="{{ l.id }}">Завершить</button></td></tr>{% else %}<tr><td colspan="7" class="empty">Пока нет маркировок.</td></tr>{% endfor %}</tbody></table></div></section>
+
+<div class="modal-backdrop" id="printModal" hidden><div class="modal" role="dialog" aria-modal="true"><button class="modal-x" id="closePrintModal" type="button">×</button><div class="modal-content"><div class="modal-image-panel"><img class="modal-product-image" id="modalProductImage" src="" alt=""></div><div><div class="eyebrow" id="modalProductCategory"></div><h3 id="modalProductName"></h3><div class="modal-hint" id="modalProductHint"></div><div class="reprint-badge" id="modalReprintBadge" hidden><b>Перепечатка</b><span id="modalSourceExpiry"></span></div><div class="quantity-row"><span>Количество</span><div class="stepper"><button id="qtyMinus" type="button">−</button><input id="modalQuantity" type="number" min="1" max="100" value="1"><button id="qtyPlus" type="button">+</button></div></div><label class="printer-select-label">Принтер<select id="printerSelect">{% for pr in printers %}<option value="{{ pr.id }}">{{ pr.name }} · {{ 'Xprinter / TSPL' if pr.driver == 'xprinter' else pr.driver }}</option>{% endfor %}</select></label>{% if not printers %}<div class="warning-box danger-note">Нет рабочего термопринтера. <a href="/printers">Добавьте принтер</a> (для Windows с USB выберите Windows / USB) и запустите Print Agent.</div>{% endif %}<div class="manual-block" id="manualExpiryBlock" hidden><label>Годен до<input id="manualExpiry" type="datetime-local"></label><div class="warning-box">Для неподтвержденного срока укажите дату по маркировке изготовителя или утвержденной ТК. Markify не придумывает срок.</div><div class="modal-expiry-help" id="modalExpiryHelp"></div></div><div class="preview-card" id="modalPreview"></div></div></div><div class="modal-actions"><button class="btn ghost" id="cancelModal" type="button">Отмена</button><button class="btn primary" id="confirmPrint" type="button"{% if not printers %} disabled{% endif %}>Печать</button></div></div></div>
+<div class="batch-result-backdrop" id="batchResult" hidden><div class="modal"><button class="modal-x" id="closeBatchResult" type="button">×</button><div class="modal-content single"><div class="eyebrow">Массовая печать</div><h3 id="batchResultTitle">Готово</h3><div id="batchResultBody"></div></div><div class="modal-actions"><button class="btn primary" id="batchResultOk" type="button">Понятно</button></div></div></div>
+<div class="toast" id="toast"></div>
+{% endblock %}
+{% block scripts %}<script>{{ page_script('dashboard') }}</script>{% endblock %}

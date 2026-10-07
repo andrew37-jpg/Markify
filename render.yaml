@@ -1,0 +1,33 @@
+# Publication template. Paid compute and a persistent disk require approval.
+services:
+  - type: web
+    name: markify
+    runtime: docker
+    plan: 0.5c-512mb
+    numInstances: 1
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    disk:
+      name: markify-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: MARKIFY_ENVIRONMENT
+        value: production
+      - key: MARKIFY_DATABASE_URL
+        value: sqlite:////app/data/markify.db
+      - key: MARKIFY_TIMEZONE
+        value: Europe/Moscow
+      - key: MARKIFY_SESSION_HTTPS_ONLY
+        value: "true"
+      - key: MARKIFY_SESSION_SECRET
+        generateValue: true
+      - key: MARKIFY_BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: MARKIFY_BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: MARKIFY_BOOTSTRAP_ORG_NAME
+        value: Markify
+      - key: MARKIFY_BOOTSTRAP_LOCATION_NAME
+        value: Основная кухня

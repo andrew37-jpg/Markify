@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f7f3"/><stop offset="1" stop-color="#ecece5"/></linearGradient></defs>
+<rect width="380" height="320" rx="32" fill="url(#bg)"/><circle cx="305" cy="66" r="44" fill="#7a7ab2" opacity=".09"/>
+<path d="M96 116h136l-20 140H116z" fill="none" stroke="#7a7ab2" stroke-width="11"/><path d="M110 96h108" stroke="#7a7ab2" stroke-width="11"/><path d="M188 96l24-30" stroke="#7a7ab2" stroke-width="11" stroke-linecap="round"/><circle cx="150" cy="178" r="12" fill="#7a7ab2"/><path d="M177 212c18-18 30-18 44 0" fill="none" stroke="#7a7ab2" stroke-width="9" stroke-linecap="round"/>
+<text x="190" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#2c2c29">Топпинг Клубника</text>
+</svg>

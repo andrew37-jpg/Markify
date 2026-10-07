@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f7f3"/><stop offset="1" stop-color="#ecece5"/></linearGradient></defs>
+<rect width="380" height="320" rx="32" fill="url(#bg)"/><circle cx="305" cy="66" r="44" fill="#5b8ba4" opacity=".09"/>
+<path d="M92 172c38-46 104-46 142 0-38 46-104 46-142 0Z" fill="none" stroke="#5b8ba4" stroke-width="12"/><circle cx="136" cy="168" r="6" fill="#5b8ba4"/><path d="M232 172l38-26v52z" fill="#5b8ba4"/>
+<text x="190" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#2c2c29">Креветки с/м 1,8 кг брикет</text>
+</svg>

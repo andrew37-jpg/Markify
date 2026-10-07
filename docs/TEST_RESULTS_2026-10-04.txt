@@ -1,0 +1,16 @@
+........................................................................ [ 97%]
+..                                                                       [100%]
+=============================== warnings summary ===============================
+../venv/lib/python3.12/site-packages/starlette/testclient.py:45
+  /workspace/scratch/123947009edd/venv/lib/python3.12/site-packages/starlette/testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+tests/test_audit_0102.py::test_real_agent_to_tcp_receiver_end_to_end
+tests/test_audit_0102.py::test_real_agent_to_tcp_receiver_end_to_end
+tests/test_audit_0102.py::test_real_agent_to_tcp_receiver_end_to_end
+tests/test_audit_0102.py::test_real_agent_to_tcp_receiver_end_to_end
+  /workspace/scratch/123947009edd/venv/lib/python3.12/site-packages/starlette/testclient.py:439: DeprecationWarning: You should not use the 'timeout' argument with the TestClient. See https://github.com/Kludex/starlette/issues/1108 for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+74 passed, 5 warnings in 8.89s

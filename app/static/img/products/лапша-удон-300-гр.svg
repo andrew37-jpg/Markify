@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f7f3"/><stop offset="1" stop-color="#ecece5"/></linearGradient></defs>
+<rect width="380" height="320" rx="32" fill="url(#bg)"/><circle cx="305" cy="66" r="44" fill="#c79b5b" opacity=".09"/>
+<path d="M104 238V122h192v116" fill="none" stroke="#c79b5b" stroke-width="11"/><path d="M88 122h224" stroke="#c79b5b" stroke-width="11" stroke-linecap="round"/><path d="M145 122V88h110v34" fill="none" stroke="#c79b5b" stroke-width="11"/><circle cx="144" cy="173" r="8" fill="#c79b5b"/><circle cx="175" cy="188" r="8" fill="#c79b5b"/><circle cx="207" cy="169" r="8" fill="#c79b5b"/><circle cx="237" cy="193" r="8" fill="#c79b5b"/>
+<text x="190" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#2c2c29">Лапша удон 300 гр</text>
+</svg>
